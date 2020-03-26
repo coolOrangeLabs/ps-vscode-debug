@@ -60,38 +60,11 @@ $contents =
 	Set-Content $outputFilename $contents 
 }
 
-#public function used to execute code specified by $cmd inside of a nested runspace
-#A bp statement has to be placed inside of the code that's executed 
-function ConnectDebuggerRunspace ([string] $cmd)
-{
-	$ps=[PowerShell]::Create("CurrentRunspace").AddCommand($cmd)
-	
-	$id=$ps.Runspace.Id
-
-	CreateLaunchJson $id $LaunchJsonPath
-
-	ShowConnectDebuggerNotification
-    $ps.Invoke()
-}
-
-#public function used to execute code specified by $cmd inside of a nested runspace
-#The debugger will connect and halt at the first line of the code
-function ConnectDebuggerRunspaceAndBreak ([string] $cmd)
-{
-	$ps=[PowerShell]::Create("CurrentRunspace").AddCommand("Wait-Debugger").AddCommand($cmd)
-
-	$id=$ps.Runspace.Id
-
-	CreateLaunchJson $id $LaunchJsonPath
-
-	ShowConnectDebuggerNotification
-    $ps.Invoke()
-}
 #public function used to attach the debugger to the currently executing runspace.
 #You must insert at least one bp statement for the debugger to attach
 function PrepareDebugger
 {
-    $id = (get-runspace).where({$_.RunspaceAvailability -eq "Busy"})[0].Id
+    $id = [PowerShell]::Create("CurrentRunspace").Runspace.Id
 	CreateLaunchJson $id $LaunchJsonPath
 	ShowConnectDebuggerNotification
 }
