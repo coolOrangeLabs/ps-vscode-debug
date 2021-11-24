@@ -2,10 +2,10 @@
 #                            Debugging support for embedded powershell
 #
 #           1: Make this file accessible to the powershell handlers you want to debug
-#           2: Edit $LaunchJsonPath to point to the launch.json you're using
+#           2: Define the $LaunchJsonPath variable to point to the launch.json you're using
 #           3: Right at the beginning of your powershell handler execute the PrepareDebugger function
 #               This will create the correct launch.json for VSCode
-#           4: Insert a bp statemnt at the location where the debugger should attach to your code
+#           4: Insert a bp statement at the location where the debugger should attach to your code
 #           5: start VSCode
 #           6: Execute your powershell code
 #           7: Once the PrepareDebugger is executed you will get a notification in the Windows notification area
@@ -16,9 +16,6 @@
 
 
 
-
-#the path to the launch.json file that should be updated
-$LaunchJsonPath = 'C:\ProgramData\Autodesk\Vault 2018\Extensions\DataStandard\Vault\addinVault\Menus\.vscode\launch.json'
 
 #define the alias that can be used as a 'breakpoint' 
 Set-Alias bp Wait-Debugger
@@ -32,6 +29,18 @@ function ShowConnectDebuggerNotification
     $objNotifyIcon.BalloonTipIcon = "Info" 
     $objNotifyIcon.BalloonTipText = "You can now start your debugger." 
     $objNotifyIcon.BalloonTipTitle = "Attach Debugger"
+    $objNotifyIcon.Visible = $True 
+    $objNotifyIcon.ShowBalloonTip(1000)
+}
+
+function ShowLaunchJsonNotDefined
+{
+    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+    $objNotifyIcon = New-Object System.Windows.Forms.NotifyIcon 
+    $objNotifyIcon.Icon = [System.Drawing.SystemIcons]::Error 
+    $objNotifyIcon.BalloonTipIcon = "Error" 
+    $objNotifyIcon.BalloonTipText = "LaunchJsonPath is not defined." 
+    $objNotifyIcon.BalloonTipTitle = "LaunchJsonPath Missing"
     $objNotifyIcon.Visible = $True 
     $objNotifyIcon.ShowBalloonTip(1000)
 }
@@ -64,8 +73,15 @@ $contents =
 #You must insert at least one bp statement for the debugger to attach
 function PrepareDebugger
 {
-    $id = [PowerShell]::Create("CurrentRunspace").Runspace.Id
-	CreateLaunchJson $id $LaunchJsonPath
-	ShowConnectDebuggerNotification
+    if ($null -eq $LaunchJsonPath)
+    {
+        ShowLaunchJsonNotDefined
+    }
+    else 
+    {
+        $id = [PowerShell]::Create("CurrentRunspace").Runspace.Id
+	    CreateLaunchJson $id $LaunchJsonPath
+	    ShowConnectDebuggerNotification
+    }
 }
 

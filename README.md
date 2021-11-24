@@ -35,10 +35,10 @@ Then, with every new invocation of the PowerShell code, the host determines the 
 ### Installation
 
 1. Place a copy of the debugger.ps1 file into a folder containing your other ps1 modules, so that if can be found and loaded during startup
-1. At the top of Debugger.ps1 there is a variable called $LaunchJsonPath. This variable tells the system where to put the launch.json file. You have to edit the value so that it matches your workspace environment.
-1. If the debugger.ps1 file is loaded automatically at startup (e.g. in powerJobs or VDS) you do not need additional steps to load the code, otherwise you should dotsource the debugger.ps1 file at the startup fo your PowerShell code.
-1. Early on in the execution of your PowerShell code you have to insert a call of the function PrepareDebugger (see sourcecdoe in debugger.ps1) This routine will determine process id and runspace id and generate a matching launch.json. It will also show a Win10 notification that you can start the debugger in VSCode
-1. As a last step in your PowerShell code you need to add a statement to stop and wait for a connecting debugger. For this purpose there is an alias defined as 'bp' at the top of debugger.ps1. You have to find a suitable place in your sourcecode where you want the debugger to attach and insert the bp statement there
+2. Dotsource the debugger.ps1 file at the startup for your PowerShell code.
+3. At the top of your PowerShell code define a variable called $LaunchJsonPath. This variable tells the system where to put the launch.json file. You have to choose the value so that it matches your workspace environment.
+4. Early on in the execution of your PowerShell code you have to insert a call of the function PrepareDebugger (see sourcecdoe in debugger.ps1) This routine will determine process id and runspace id and generate a matching launch.json. It will also show a Win10 notification that you can start the debugger in VSCode
+5. As a last step in your PowerShell code you need to add a statement to stop and wait for a connecting debugger. For this purpose there is an alias defined as 'bp' at the top of debugger.ps1. You have to find a suitable place in your sourcecode where you want the debugger to attach and insert the bp statement there
 
 ### Usage 
 
